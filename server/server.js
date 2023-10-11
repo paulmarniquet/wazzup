@@ -1,15 +1,23 @@
 import express from 'express';
 import axios from 'axios';
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: '../.env' });
 
 const app = express();
+const notion_database = process.env.NOTION_DATABASE;
+const corsOptions = {
+    origin: '*',
+}
 
-app.use(express.json());
+app.use(cors(corsOptions));
 
-app.get('/notion-api', async (req, res) => {
+app.post('/notion-api', async (req, res) => {
     try {
-        const response = await axios('https://api.notion.com/v1/databases//', {
+        const response = await axios('https://api.notion.com/v1/databases/' + notion_database, {
             headers: {
-                'Authorization': '',
+                'Authorization': process.env.NOTION_TOKEN,
                 'Notion-Version': '2022-06-28'
             }
         });

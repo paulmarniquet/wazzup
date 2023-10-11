@@ -31,8 +31,11 @@ async function getRelatedPosts() {
 async function createItemInDatabase(accessToken: string) {
   try {
     const response = await axios({
-      method: 'GET',
+      method: 'post',
       url: 'http://localhost:3001/notion-api',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
     console.log(response.data);
   } catch (error) {
