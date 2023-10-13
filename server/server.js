@@ -1,10 +1,12 @@
 import express from 'express';
-import axios from 'axios';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import {Client} from "@notionhq/client";
+import bodyParser from "body-parser";
 
 
+var jsonParser = bodyParser.json()
+var urlencodedParser = bodyParser.urlencoded({ extended: false })
 dotenv.config({path: '../.env'});
 
 const app = express();
@@ -15,20 +17,13 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.post('/notion-api', async (req, res) => {
-
+app.post('/notion-api', jsonParser, async (req, res) => {
     const notionClient = new Client({
         auth: process.env.NOTION_TOKEN,
     });
-    console.log(req.body);
-    // get data from request
-    const title = req.data.titre;
-    const link = req.data.link;
-    console.log(title);
-/*
-    let logo = req.logo;
-*/
-
+    const title = req.body.post_titre;
+    const link = req.body.post_url;
+    let logo = req.body.post_logo;
     const response = await notionClient.pages.create({
         parent: {
             database_id: notion_database,
@@ -53,7 +48,7 @@ app.post('/notion-api', async (req, res) => {
                         {
                             type: "text",
                             text: {
-                                content: url,
+                                content: link,
                             },
                         },
                     ],
