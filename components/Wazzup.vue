@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import {Client} from "@notionhq/client";
 import axios from "axios";
-import * as repl from "repl";
 
 const runtimeConfig = useRuntimeConfig()
 
@@ -31,11 +29,8 @@ async function getRelatedPosts() {
           'X-RapidAPI-Host': 'medium2.p.rapidapi.com'
         }
       });
-      let title = options.data.title
       let link = 'https://medium.com/publications/' + response.data.latestposts[i];
-      let image = options.data.image_url;
-      let array = [title, link, image];
-      await createItemInDatabase(array);
+      await createItemInDatabase([options.data.title, link, options.data.image_url, options.data.topics, options.data.subtitle]);
     }
   } catch
       (error) {
@@ -54,7 +49,9 @@ async function createItemInDatabase(body: any) {
       data: {
         "post_titre": body[0],
         "post_url": body[1],
-        "post_logo": body[2]
+        "post_logo": body[2],
+        "post_topics": body[3],
+        "post_subtitle": body[4]
       }
     });
   } catch (error) {

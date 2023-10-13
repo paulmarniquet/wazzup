@@ -4,13 +4,9 @@ import dotenv from 'dotenv';
 import {Client} from "@notionhq/client";
 import bodyParser from "body-parser";
 
-
-var jsonParser = bodyParser.json()
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
 dotenv.config({path: '../.env'});
-
 const app = express();
-const notion_database = process.env.NOTION_DATABASE;
+const jsonParser = bodyParser.json()
 const corsOptions = {
     origin: '*',
 }
@@ -23,12 +19,35 @@ app.post('/notion-api', jsonParser, async (req, res) => {
     });
     const title = req.body.post_titre;
     const link = req.body.post_url;
-    let logo = req.body.post_logo;
+    const logo = req.body.post_logo;
+    const topics = req.body.post_topics;
+    const subtitle = req.body.post_subtitle;
     const response = await notionClient.pages.create({
         parent: {
-            database_id: notion_database,
+            database_id: process.env.NOTION_DATABASE,
+        },
+        cover: {
+            external: {
+                url: logo
+            }
+        },
+        icon: {
+            emoji: "✍️"
         },
         properties: {
+            URL: {
+                url: link,
+            },
+            tag: {
+                select: {
+                    name: topics[0],
+                }
+            },
+            État: {
+                select: {
+                    name: "Wazzup"
+                }
+            },
             title: {
                 title: [
                     {
@@ -48,7 +67,7 @@ app.post('/notion-api', jsonParser, async (req, res) => {
                         {
                             type: "text",
                             text: {
-                                content: link,
+                                content: subtitle,
                             },
                         },
                     ],
