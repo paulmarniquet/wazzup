@@ -1,26 +1,28 @@
 <script setup lang="ts">
+import {ref} from 'vue';
 import axios from "axios";
 
-const runtimeConfig = useRuntimeConfig()
+const runtimeConfig = useRuntimeConfig();
+const inputValue = ref('');
+const sliderValue = ref(5);
 
 const manWhatsup = () => {
-  getRelatedPosts()
+  getRelatedPosts(inputValue.value, sliderValue.value);
+  console.log(inputValue.value, sliderValue.value);
 }
 
-async function getRelatedPosts() {
+async function getRelatedPosts(subject : string, number : number) {
   const medium_token = runtimeConfig.public.MEDIUM_TOKEN
-  const subject = 'javascript'
-
   try {
     const response = await axios({
       method: 'GET',
-      url: 'https://medium2.p.rapidapi.com/latestposts/' + subject,
+      url: `https://medium2.p.rapidapi.com/latestposts/${subject}`,
       headers: {
         'X-RapidAPI-Key': medium_token,
         'X-RapidAPI-Host': 'medium2.p.rapidapi.com'
       }
     });
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < number; i++) {
       const options = await axios({
         method: 'GET',
         url: 'https://medium2.p.rapidapi.com/article/' + response.data.latestposts[i],
@@ -40,7 +42,7 @@ async function getRelatedPosts() {
 
 async function createItemInDatabase(body: any) {
   try {
-    const response = await axios({
+    await axios({
       method: 'post',
       url: 'http://localhost:3001/notion-api',
       headers: {
@@ -58,16 +60,34 @@ async function createItemInDatabase(body: any) {
     console.error(error);
   }
 }
-
 </script>
 
 
 <template>
-  <div>
+  <div class="body">
+    <div class="column">
+      <input v-model="inputValue" type="text" placeholder="Sujet" class="input">
+      <input v-model="sliderValue" type="range" min="1" max="10" class="slider" id="myRange">
+    </div>
     <button @click="manWhatsup">Wazzup</button>
   </div>
 </template>
 
 <style scoped>
+.body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+}
 
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.input, .slider {
+  margin-bottom: 10px;
+}
 </style>

@@ -8,7 +8,9 @@
 import Wazzup from '~/components/Wazzup.vue'
 export default {
   components: {
-    Wazzup
+    Wazzup,
   }
 }
+
+
 </script>
