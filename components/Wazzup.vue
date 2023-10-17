@@ -4,15 +4,14 @@ import axios from "axios";
 
 const runtimeConfig = useRuntimeConfig();
 const inputValue = ref('');
-const sliderValue = ref(5);
+const sliderValue = ref(3);
 
 const manWhatsup = () => {
   getRelatedPosts(inputValue.value, sliderValue.value);
-  console.log(inputValue.value, sliderValue.value);
 }
 
-async function getRelatedPosts(subject : string, number : number) {
-  const medium_token = runtimeConfig.public.MEDIUM_TOKEN
+async function getRelatedPosts(subject: string, number: number) {
+  const medium_token = runtimeConfig.public.MEDIUM_TOKEN;
   try {
     const response = await axios({
       method: 'GET',
@@ -22,27 +21,32 @@ async function getRelatedPosts(subject : string, number : number) {
         'X-RapidAPI-Host': 'medium2.p.rapidapi.com'
       }
     });
-    for (let i = 0; i < number; i++) {
+
+    const promises = Array.from({length: number}, async (_, i) => {
       const options = await axios({
         method: 'GET',
-        url: 'https://medium2.p.rapidapi.com/article/' + response.data.latestposts[i],
+        url: `https://medium2.p.rapidapi.com/article/${response.data.latestposts[i]}`,
         headers: {
           'X-RapidAPI-Key': medium_token,
           'X-RapidAPI-Host': 'medium2.p.rapidapi.com'
         }
       });
-      let link = 'https://medium.com/publications/' + response.data.latestposts[i];
-      await createItemInDatabase([options.data.title, link, options.data.image_url, options.data.topics, options.data.subtitle]);
-    }
-  } catch
-      (error) {
+
+      const link = `https://medium.com/publications/${response.data.latestposts[i]}`;
+      return [options.data.title, link, options.data.image_url, options.data.topics, options.data.subtitle];
+    });
+
+    const results = await Promise.all(promises);
+
+    results.forEach(createItemInDatabase);
+  } catch (error) {
     console.error(error);
   }
 }
 
-async function createItemInDatabase(body: any) {
+function createItemInDatabase(body: any) {
   try {
-    await axios({
+    axios({
       method: 'post',
       url: 'http://localhost:3001/notion-api',
       headers: {

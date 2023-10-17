@@ -19,7 +19,7 @@ app.post('/notion-api', jsonParser, async (req, res) => {
     });
     const title = req.body.post_titre;
     const link = req.body.post_url;
-    const logo = req.body.post_logo;
+    const logo = req.body.post_logo || "https://www.notion.so/images/page-cover/solid_yellow.png";
     const topics = req.body.post_topics;
     const subtitle = req.body.post_subtitle;
     const response = await notionClient.pages.create({
