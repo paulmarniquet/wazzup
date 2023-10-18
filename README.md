@@ -7,6 +7,7 @@
 L'objectif de **Wazzup** est d'automatiser au maximum la veille en récupérant des articles liés à un sujet spécifique depuis (pour l'instant) le blog Medium, grâce à une API non-officielle. Ces articles sont ensuite envoyés à notre page de veille sur Notion via l'API Notion, permettant ainsi de rester à jour sur les dernières publications dans un domaine donné.
 
 
+https://github.com/paulmarniquet/wazzup/assets/72015483/d5291203-a581-461e-b6b5-85eee7011ac3
 
 
 ## Technologies
