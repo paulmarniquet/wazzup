@@ -11,6 +11,12 @@ export default {
     Wazzup,
   }
 }
-
-
 </script>
+
+<style>
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>
